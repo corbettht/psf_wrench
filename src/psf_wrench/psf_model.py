@@ -39,7 +39,7 @@ class PSFSplineModel:
         -------
         None
         """
-        obj_tbl, _, _ = extract_sources(self.data, detect_sigma=detect_sigma)
+        obj_tbl, bkg_map, _ = extract_sources(self.data, detect_sigma=detect_sigma)
 
         self.stamp_positions = np.array(
             list(
@@ -50,7 +50,9 @@ class PSFSplineModel:
             ),
             dtype=np.float32,
         )
-        stamps = make_mono_stamp(self.data, self.stamp_positions, size=self.stamp_size)
+        stamps = make_mono_stamp(
+            self.data - bkg_map, self.stamp_positions, size=self.stamp_size
+        )
 
         self.stamps = stamps  # / stamps.sum(axis=(1, 2))[:, None, None]
 
@@ -191,18 +193,21 @@ class PSFSplineModel:
         numpy.ndarray
             Evaluated PSF at the given (x, y) positions.
         """
+        x_phase = x % 1
+        y_phase = y % 1
 
-        print(oversampled)
         if oversampled:
             size = self.stamp_size * self.oversampling
         else:
             size = self.stamp_size
-        print(size)
 
         u_grid = np.linspace(0, 1, size)
         v_grid = np.linspace(0, 1, size)
 
-        return self.spline(x, y, u_grid[:, None], v_grid[None, :])
+        p = self.spline(x, y, u_grid[:, None], v_grid[None, :])
+
+        p = snd.shift(p, (x_phase, y_phase), order=self.alignment_order, mode="nearest")
+        return p / p.sum()
 
     def __call__(self, x, y, **kwargs):
         """
