@@ -175,7 +175,7 @@ class PSFSplineModel:
 
         return psf_model
 
-    def evaluate(self, x, y):
+    def evaluate(self, x, y, oversampled=False):
         """
         Evaluate the PSF model at given (x, y) positions.
 
@@ -191,12 +191,20 @@ class PSFSplineModel:
         numpy.ndarray
             Evaluated PSF at the given (x, y) positions.
         """
-        u_grid = np.linspace(0, 1, self.stamp_size)
-        v_grid = np.linspace(0, 1, self.stamp_size)
+
+        print(oversampled)
+        if oversampled:
+            size = self.stamp_size * self.oversampling
+        else:
+            size = self.stamp_size
+        print(size)
+
+        u_grid = np.linspace(0, 1, size)
+        v_grid = np.linspace(0, 1, size)
 
         return self.spline(x, y, u_grid[:, None], v_grid[None, :])
 
-    def __call__(self, x, y):
+    def __call__(self, x, y, **kwargs):
         """
         Callable interface to evaluate the PSF model.
 
@@ -212,4 +220,4 @@ class PSFSplineModel:
         numpy.ndarray
             Evaluated PSF at the given (x, y) positions.
         """
-        return self.evaluate(x, y)
+        return self.evaluate(x, y, **kwargs)
