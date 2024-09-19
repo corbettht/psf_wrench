@@ -22,6 +22,13 @@ class Config:
     oversampling: Optional[float] = 10.0
     stamp_size: Optional[int] = 31
 
+    # min and max object sizes for the PSF model
+    min_object_size: Optional[int] = 5
+    max_object_size: Optional[int] = 100
+
+    # matching parameters for initial detection
+    kernel_size: Optional[int] = 5
+
 
 def get_config() -> Optional[Config]:
     """Grab the first TOML file in the CWD that looks like an argussim config."""

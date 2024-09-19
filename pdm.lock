@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:3c84efae1bd86f50deb4425d57ca5da9742804f9b7b29d5a92a2cb958cbe8234"
+content_hash = "sha256:06151c576643837f3b0122ac22ba3b30a94aa20160405174db2db2920abb5203"
 
 [[metadata.targets]]
 requires_python = ">=3.10"
@@ -252,6 +252,27 @@ files = [
     {file = "scipy-1.14.1-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:e4f5a7c49323533f9103d4dacf4e4f07078f360743dec7f7596949149efeec06"},
     {file = "scipy-1.14.1-cp313-cp313-win_amd64.whl", hash = "sha256:baff393942b550823bfce952bb62270ee17504d02a1801d7fd0719534dfb9c84"},
     {file = "scipy-1.14.1.tar.gz", hash = "sha256:5a275584e726026a5699459aa72f828a610821006228e841b94275c4a7c08417"},
+]
+
+[[package]]
+name = "sep"
+version = "1.2.1"
+requires_python = ">=3.5"
+summary = "Astronomical source extraction and photometry library"
+groups = ["default"]
+dependencies = [
+    "numpy",
+]
+files = [
+    {file = "sep-1.2.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:b8253cc1c078ee98b007023edbd9ae2602586dc6b44e225339160509d687df64"},
+    {file = "sep-1.2.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:93d2b9e30ab3f4abc7ebf005221285a641aad4ee22e41e7309b59b4a8b173d14"},
+    {file = "sep-1.2.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:0f5650a120f0e5c6c2be04cba87f5fb2ba46256c72a4b2cf90a39bb21ee871f3"},
+    {file = "sep-1.2.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:501600d7ac027f7249675340d04e312b007c31026a3a8572ab77c4037888a928"},
+    {file = "sep-1.2.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3983ba16f89172aa81967fdceb362efc709d1ca909ff0dceefdc194ebc45817c"},
+    {file = "sep-1.2.1-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f9a726c488364882c8a1625e333b17f15d18e5b6c4c747386fc6a77854ae0eaf"},
+    {file = "sep-1.2.1-cp310-cp310-win32.whl", hash = "sha256:87d8003c9a78d2e7f9e9b6eda66f2936e706496a9bd8543b3a7eeed68b75394b"},
+    {file = "sep-1.2.1-cp310-cp310-win_amd64.whl", hash = "sha256:4d5c4431ed676a8916b748fa0dcce84532ad6c0028a957269dfe066f7bbe0cdd"},
+    {file = "sep-1.2.1.tar.gz", hash = "sha256:1b6a36a554b3b315a9a96d19159f1ae39d9dad75bef510b1dc084c5aa9a4489b"},
 ]
 
 [[package]]
