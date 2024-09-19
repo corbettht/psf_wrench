@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:fcfbcd4543b73c241103fe2258c1382d32039b81180f5ed7bc0c7b0f89030561"
+content_hash = "sha256:3c84efae1bd86f50deb4425d57ca5da9742804f9b7b29d5a92a2cb958cbe8234"
 
 [[metadata.targets]]
 requires_python = ">=3.10"
@@ -64,6 +64,19 @@ groups = ["default"]
 files = [
     {file = "astropy_iers_data-0.2024.9.16.0.32.21-py3-none-any.whl", hash = "sha256:adf111e1b596470c4437fa44cf767e56f6d4bc2e93068871fd0b30c73476d430"},
     {file = "astropy_iers_data-0.2024.9.16.0.32.21.tar.gz", hash = "sha256:2ff6fe868a623e616953a432698b05dd6adac9683d21ac780bfbb94e78f7c344"},
+]
+
+[[package]]
+name = "dacite"
+version = "1.8.1"
+requires_python = ">=3.6"
+summary = "Simple creation of data classes from dictionaries."
+groups = ["default"]
+dependencies = [
+    "dataclasses; python_version < \"3.7\"",
+]
+files = [
+    {file = "dacite-1.8.1-py3-none-any.whl", hash = "sha256:cc31ad6fdea1f49962ea42db9421772afe01ac5442380d9a99fcf3d188c61afe"},
 ]
 
 [[package]]
@@ -239,4 +252,43 @@ files = [
     {file = "scipy-1.14.1-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:e4f5a7c49323533f9103d4dacf4e4f07078f360743dec7f7596949149efeec06"},
     {file = "scipy-1.14.1-cp313-cp313-win_amd64.whl", hash = "sha256:baff393942b550823bfce952bb62270ee17504d02a1801d7fd0719534dfb9c84"},
     {file = "scipy-1.14.1.tar.gz", hash = "sha256:5a275584e726026a5699459aa72f828a610821006228e841b94275c4a7c08417"},
+]
+
+[[package]]
+name = "tomli"
+version = "2.0.1"
+requires_python = ">=3.7"
+summary = "A lil' TOML parser"
+groups = ["default"]
+marker = "python_version < \"3.11\""
+files = [
+    {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
+    {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
+]
+
+[[package]]
+name = "tomli-w"
+version = "1.0.0"
+requires_python = ">=3.7"
+summary = "A lil' TOML writer"
+groups = ["default"]
+files = [
+    {file = "tomli_w-1.0.0-py3-none-any.whl", hash = "sha256:9f2a07e8be30a0729e533ec968016807069991ae2fd921a78d42f429ae5f4463"},
+    {file = "tomli_w-1.0.0.tar.gz", hash = "sha256:f463434305e0336248cac9c2dc8076b707d8a12d019dd349f5c1e382dd1ae1b9"},
+]
+
+[[package]]
+name = "tosholi"
+version = "0.1.0"
+requires_python = ">=3.8"
+summary = "Read and write TOML config files with dataclasses."
+groups = ["default"]
+dependencies = [
+    "dacite",
+    "tomli-w",
+    "tomli; python_version < \"3.11\"",
+]
+files = [
+    {file = "tosholi-0.1.0-py3-none-any.whl", hash = "sha256:ede72182603cbd295da0bfc7f812dba04f964c8886fa99eef5e35757d5aaae84"},
+    {file = "tosholi-0.1.0.tar.gz", hash = "sha256:326ca4b8d8310b32af99e8be73a3b6628b30f3c8b4dbb8e7bc60e42a25a91a52"},
 ]

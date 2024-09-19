@@ -8,6 +8,7 @@ authors = [
 dependencies = [
     "scipy>=1.9.3",
     "astropy>=5.2.2",
+    "tosholi>=0.1.0",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
