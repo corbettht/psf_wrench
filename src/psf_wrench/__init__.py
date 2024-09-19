@@ -1,5 +1,7 @@
+__all__ = ["PSFSplineModel"]
 import logging
 from . import config
+from .psf_model import PSFSplineModel
 
 
 def get_logger(name):
