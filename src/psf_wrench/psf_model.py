@@ -1,6 +1,9 @@
 import numpy as np
+import numpy.ma as ma
 from scipy.interpolate import RectBivariateSpline, SmoothBivariateSpline
+import scipy.ndimage as snd
 
+import astropy.stats as astat
 from .detector import extract_sources
 from .stamp_extractor import make_mono_stamp
 
@@ -19,12 +22,16 @@ class PSFSplineModel:
         Size of the stamp used for PSF modeling, by default 31.
     """
 
-    def __init__(self, data, oversampling=10.0, stamp_size=31):
+    def __init__(
+        self, data, oversampling=10.0, stamp_size=31, alignment_order=3, spline_order=3
+    ):
         self.data = data
         self.oversampling = oversampling
+        self.alignment_order = alignment_order
+        self.spline_order = spline_order
         self.stamp_size = stamp_size
 
-    def fit(self):
+    def fit(self, detect_sigma=8, smoothing=5):
         """
         Fit the PSF model to the data by extracting sources and fitting splines.
 
@@ -32,7 +39,7 @@ class PSFSplineModel:
         -------
         None
         """
-        obj_tbl, _, _ = extract_sources(self.data)
+        obj_tbl, _, _ = extract_sources(self.data, detect_sigma=detect_sigma)
 
         self.stamp_positions = np.array(
             list(
@@ -44,13 +51,66 @@ class PSFSplineModel:
             dtype=np.float32,
         )
         stamps = make_mono_stamp(self.data, self.stamp_positions, size=self.stamp_size)
-        self.stamps = stamps
 
-        self.spline = self._fit_spline(
-            stamps, obj_tbl["xcentroid"], obj_tbl["ycentroid"]
+        self.stamps = stamps  # / stamps.sum(axis=(1, 2))[:, None, None]
+
+        out_stamps = np.zeros(
+            (
+                stamps.shape[0],
+                self.oversampling * self.stamp_size,
+                self.oversampling * self.stamp_size,
+            )
         )
 
-    def _fit_spline(self, cutouts, x_positions, y_positions, spline_order=3):
+        for i in range(stamps.shape[0]):
+            stamp = snd.zoom(
+                stamps[i, :, :], self.oversampling, order=self.alignment_order
+            )
+            shiftx = self.oversampling * (
+                obj_tbl["xcentroid"][i] - np.rint(obj_tbl["xcentroid"][i])
+            )
+            shifty = self.oversampling * (
+                obj_tbl["ycentroid"][i] - np.rint(obj_tbl["ycentroid"][i])
+            )
+            stamp = snd.shift(
+                stamp, (shiftx, shifty), order=self.alignment_order, mode="nearest"
+            )
+            stamp /= stamp.sum()
+            out_stamps[i] = stamp
+
+        masked_stamps = astat.sigma_clip(out_stamps[:, :, :], axis=0, maxiters=None)
+        mean_stamp = ma.median(masked_stamps, axis=0).data
+        self.masked_stamps = masked_stamps.filled(mean_stamp)
+        # masked_stamps = masked_stamps
+        masked_stamps = astat.sigma_clip(
+            out_stamps[:, :, :],
+            sigma=3,
+            axis=0,
+            maxiters=None,
+            masked=False,
+        )
+
+        reject_ix = []
+        for i in range(masked_stamps.shape[0]):
+            if np.any(np.isnan(masked_stamps[i])):
+                reject_ix.append(i)
+        good_stamp_mask = np.ones(masked_stamps.shape[0], dtype=bool)
+        good_stamp_mask[reject_ix] = False
+        self.masked_stamps = masked_stamps[good_stamp_mask, :, :]
+        self.stamp_positions = self.stamp_positions[good_stamp_mask]
+        obj_tbl = obj_tbl[good_stamp_mask]
+
+        self.spline = self._fit_spline(
+            self.masked_stamps,
+            obj_tbl["xcentroid"],
+            obj_tbl["ycentroid"],
+            spline_order=self.spline_order,
+            smoothing=smoothing,
+        )
+
+    def _fit_spline(
+        self, cutouts, x_positions, y_positions, spline_order=3, smoothing=5
+    ):
         """
         Fits a PSF model using bicubic splines for the cutouts, and models the spline coefficients
         as smoothly varying functions of x and y positions across the image.
@@ -108,6 +168,7 @@ class PSFSplineModel:
                 np.array(predicted_coeffs).reshape(w, h),
                 kx=spline_order,
                 ky=spline_order,
+                s=smoothing,
             )
 
             return psf_spline(u, v)
