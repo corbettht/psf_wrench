@@ -51,13 +51,13 @@ class SEPSourceDetect:
         bkg = sep.Background(
             data, bw=self.bg_map_shape[0], bh=self.bg_map_shape[0], fw=3, fh=3
         )
-        data -= bkg.back()
+        data_bkg_sub = data - bkg.back()
 
-        noise_image = np.sqrt(np.abs(data) / 0.5 + bkg.rms() ** 2)
+        noise_image = np.sqrt(np.abs(data_bkg_sub) / 0.5 + bkg.rms() ** 2)
 
         sep.set_extract_pixstack(30000000)
         objects = sep.extract(
-            data,
+            data_bkg_sub,
             detect_sigma,
             err=noise_image,
             minarea=3,
@@ -68,12 +68,12 @@ class SEPSourceDetect:
         # deblend_cont=1.0)
 
         flux, fluxerr, flag = sep.sum_circle(
-            data, objects["x"], objects["y"], 4.5, err=noise_image
+            data_bkg_sub, objects["x"], objects["y"], 4.5, err=noise_image
         )
 
         obj_tbl = tbl.Table({name: objects[name] for name in objects.dtype.names})
         r, flag = sep.flux_radius(
-            data,
+            data_bkg_sub,
             obj_tbl["x"],
             obj_tbl["y"],
             6.0 * obj_tbl["a"],
@@ -83,7 +83,9 @@ class SEPSourceDetect:
         )
         sig = 2.0 / 2.35 * r
 
-        xwin, ywin, flag = sep.winpos(data, obj_tbl["x"], obj_tbl["y"], sig, subpix=0)
+        xwin, ywin, flag = sep.winpos(
+            data_bkg_sub, obj_tbl["x"], obj_tbl["y"], sig, subpix=0
+        )
 
         obj_tbl["flux"] = flux
         obj_tbl["fluxerr"] = fluxerr
@@ -100,7 +102,7 @@ class SEPSourceDetect:
             -2.5 * np.log10(obj_tbl["flux"]) + 23
         )  # 23 is an arbitrary zeropoint to get things > 0
 
-        sy, sx = data.shape
+        sy, sx = data_bkg_sub.shape
         obj_tbl = obj_tbl[
             (obj_tbl["x"] > margin)
             & (obj_tbl["x"] < sx - margin)
