@@ -43,4 +43,4 @@ def make_mono_stamp(img, candidates, size=1):
 
     stamps = img[:, Y, X].transpose(1, 3, 2, 0)
 
-    return np.array(stamps).astype(np.float32)
+    return np.array(stamps).astype(np.float32)[:, :, :, 0]

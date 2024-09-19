@@ -1,4 +1,5 @@
 import logging
+from . import config
 
 
 def get_logger(name):
@@ -21,3 +22,5 @@ base_log = get_logger(__name__).addHandler(logging.StreamHandler())
 
 # Silenced
 # logging.getLogger(__name__).addHandler(logging.NullHandler())
+
+c = config.get_config()

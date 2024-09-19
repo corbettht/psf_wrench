@@ -24,7 +24,7 @@ class SEPSourceDetect:
 
     def detect(
         self, data: npt.ArrayLike, detect_sigma: float, margin: Optional[int] = 10
-    ):
+    ) -> tuple[tbl.Table, np.ndarray, np.ndarray]:
         """
         Detect sources in the given data.
 
@@ -100,10 +100,18 @@ class SEPSourceDetect:
             -2.5 * np.log10(obj_tbl["flux"]) + 23
         )  # 23 is an arbitrary zeropoint to get things > 0
 
+        sy, sx = data.shape
+        obj_tbl = obj_tbl[
+            (obj_tbl["x"] > margin)
+            & (obj_tbl["x"] < sx - margin)
+            & (obj_tbl["y"] > margin)
+            & (obj_tbl["y"] < sy - margin)
+        ]
+
         return obj_tbl, bkg.back(), bkg.rms()
 
 
-def extract_sources(data: npt.ArrayLike, detect_sigma=5.0, bg_meshsize=128):
+def extract_sources(data: npt.ArrayLike, detect_sigma=5.0, bg_meshsize=128, margin=25):
     """
     Extract sources from the given data.
 
@@ -126,4 +134,4 @@ def extract_sources(data: npt.ArrayLike, detect_sigma=5.0, bg_meshsize=128):
         RMS of the background.
     """
     detector = SEPSourceDetect(data.shape, (bg_meshsize, bg_meshsize))
-    return detector.detect(data, detect_sigma)
+    return detector.detect(data, detect_sigma, margin=margin)
