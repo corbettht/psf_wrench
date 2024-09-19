@@ -1,0 +1,22 @@
+[project]
+name = "psf_wrench"
+version = "0.1.0"
+description = "Coherent PSF model on human timescales. Hackathon project."
+authors = [
+    {name = "Hank Corbett", email = "htc@unc.edu"},
+]
+dependencies = [
+    "scipy>=1.9.3",
+    "astropy>=5.2.2",
+]
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
